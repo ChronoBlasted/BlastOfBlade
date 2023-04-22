@@ -26,16 +26,9 @@ public class GameManager : MonoSingleton<GameManager>
 
         UIManager.Instance.Init();
 
+        PlayerController.Instance.Init();
 
         ResetGame();
-    }
-
-    private void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.R))
-        {
-            ReloadScene();
-        }
     }
 
     public void UpdateGameState(GameState newState)
