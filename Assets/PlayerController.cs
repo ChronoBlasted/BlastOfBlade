@@ -66,9 +66,7 @@ public class PlayerController : MonoSingleton<PlayerController>
             return;
         }
 
-
         _isBeamExist = true;
-
 
         Vector3 mousePosition = Mouse.current.position.value;
         mousePosition.z = 10f;
