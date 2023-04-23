@@ -60,7 +60,7 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
                     ""name"": """",
                     ""id"": ""c5d1400c-e907-4b12-b4b1-8cc198e55199"",
                     ""path"": ""<Keyboard>/#(E)"",
-                    ""interactions"": """",
+                    ""interactions"": ""Hold"",
                     ""processors"": """",
                     ""groups"": ""Keyboard"",
                     ""action"": ""CastFirstBlade"",

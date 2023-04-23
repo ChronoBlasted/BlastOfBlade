@@ -1,9 +1,11 @@
 using BaseTemplate.Behaviours;
+using Cinemachine;
 using DG.Tweening;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
 
 public enum GameState { MENU, GAME, PAUSE, END, WAIT }
@@ -13,8 +15,11 @@ public class GameManager : MonoSingleton<GameManager>
     public event Action<GameState> OnGameStateChanged;
 
     GameState _gameState;
+
     Coroutine _launchGameCoroutine;
+
     public GameState GameState { get => _gameState; }
+
 
     private void Awake()
     {
@@ -29,6 +34,14 @@ public class GameManager : MonoSingleton<GameManager>
         PlayerController.Instance.Init();
 
         ResetGame();
+    }
+
+    private void Update()
+    {
+        if (Keyboard.current.rKey.wasPressedThisFrame)
+        {
+            ReloadScene();
+        }
     }
 
     public void UpdateGameState(GameState newState)
@@ -99,4 +112,6 @@ public class GameManager : MonoSingleton<GameManager>
     }
 
     public void QuitApp() => Application.Quit();
+
+
 }

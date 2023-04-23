@@ -21,8 +21,8 @@ TagManager:
   - 
   - 
   - 
-  - Beam
-  - 
+  - Blade
+  - BladeEnemyLayer
   - 
   - 
   - 
@@ -31,7 +31,7 @@ TagManager:
   - 
   - 
   - 
-  - 
+  - Ground
   - 
   - 
   - 
