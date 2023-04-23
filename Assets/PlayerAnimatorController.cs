@@ -19,19 +19,27 @@ public class PlayerAnimatorController : MonoBehaviour
 
     private void Update()
     {
+        FlipSprite();
+
         if (_playerController.IsWalled(Vector2.left) == false && _playerController.IsWalled(Vector2.right) == false)
         {
             if (_playerController.HaveDoubleJump == false) PlayerDoubleJump();
-            else if (_playerController.RB.velocity.y < 0) PlayerFall();
-            else if (_playerController.RB.velocity.y > 0) PlayerJump();
+            else if (_playerController.RB.velocity.y < -0.01f) PlayerFall();
+            else if (_playerController.RB.velocity.y > 0.01f) PlayerJump();
         }
-
 
         if (_playerController.MoveValue.x != 0 && _playerController.IsGrounded()) PlayerRun();
         else if (_playerController.IsGrounded()) PlayerIdle();
-        else if (_playerController.IsWalled(Vector2.left) || _playerController.IsWalled(Vector2.right)) PlayerWall();
-
-        FlipSprite();
+        else if (_playerController.IsWalled(Vector2.left))
+        {
+            _sprite.flipX = true;
+            PlayerWall();
+        }
+        else if (_playerController.IsWalled(Vector2.right))
+        {
+            _sprite.flipX = false;
+            PlayerWall();
+        }
     }
 
     void FlipSprite()

@@ -78,7 +78,7 @@ public class PlayerController : MonoSingleton<PlayerController>, IHealth
 
     public bool IsGrounded()
     {
-        float extraHeightText = .01f;
+        float extraHeightText = .05f;
 
         RaycastHit2D raycastHit = Physics2D.BoxCast(_collider.bounds.center, _collider.bounds.size, 0f, Vector2.down, extraHeightText, _isGroundedLayerMask);
 
@@ -89,12 +89,14 @@ public class PlayerController : MonoSingleton<PlayerController>, IHealth
 
     public bool IsWalled(Vector2 direction)
     {
-        float extraHeightText = .01f;
+        float extraHeightText = .05f;
 
         RaycastHit2D raycastHit = Physics2D.BoxCast(_collider.bounds.center, _collider.bounds.size, 0f, direction, extraHeightText, _isGroundedLayerMask);
 
         if (raycastHit.collider != null)
         {
+            if (_RB.velocity.y <= 0f) _RB.velocity = new Vector2(_RB.velocity.x, -1);
+
             _haveDoubleJump = true;
 
             return true;
