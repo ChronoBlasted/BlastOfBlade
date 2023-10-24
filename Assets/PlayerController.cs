@@ -17,8 +17,6 @@ public class PlayerController : MonoSingleton<PlayerController>, IHealth
     [SerializeField] float _bladeSpeed, _forceJump, _movementSpeed, _maxFallSpeed;
     [SerializeField] int _health = 5;
 
-
-    PlayerInputActions _playerInputActions;
     GameObject _lastBeam;
     bool _isBeamExist, _canCastBlade, _haveDoubleJump;
     Vector2 _moveValue, m_Velocity = Vector2.zero;
@@ -31,28 +29,6 @@ public class PlayerController : MonoSingleton<PlayerController>, IHealth
     {
         _isBeamExist = false;
         _canCastBlade = true;
-
-        _playerInputActions = new PlayerInputActions();
-        _playerInputActions.Player.Enable();
-
-        _playerInputActions.Player.Jump.performed += Jump;
-
-        _playerInputActions.Player.CastFirstBlade.started += TeleportToBlade;
-        _playerInputActions.Player.CastFirstBlade.performed += SlowTime;
-        _playerInputActions.Player.CastFirstBlade.canceled += CastBlade;
-
-
-        /*_playerInputActions.Player.Disable();
-        _playerInputActions.Player.Jump.PerformInteractiveRebinding()
-            .WithControlsExcluding("Mouse")
-            .OnComplete(x =>
-            {
-                Debug.Log(x);
-                x.Dispose();
-                _playerInputActions.Player.Enable();
-
-            })
-            .Start();*/
     }
 
     private void Update()
@@ -60,20 +36,6 @@ public class PlayerController : MonoSingleton<PlayerController>, IHealth
         IsGrounded();
         IsWalled(Vector2.left);
         IsWalled(Vector2.right);
-    }
-
-    private void FixedUpdate()
-    {
-        _moveValue = _playerInputActions.Player.Movement.ReadValue<Vector2>().normalized * _movementSpeed;
-
-        Vector2 targetVelocity = new Vector2(_moveValue.x, _RB.velocity.y);
-
-        _RB.velocity = Vector2.SmoothDamp(_RB.velocity, targetVelocity, ref m_Velocity, .05f);
-
-        if (_RB.velocity.y < -_maxFallSpeed)
-        {
-            _RB.velocity = new Vector2(_RB.velocity.x, -_maxFallSpeed);
-        }
     }
 
     public bool IsGrounded()
@@ -104,13 +66,7 @@ public class PlayerController : MonoSingleton<PlayerController>, IHealth
         else return false;
     }
 
-
-    void SlowTime(InputAction.CallbackContext context)
-    {
-        TimeManager.Instance.SetTime(.2f);
-    }
-
-    void CastBlade(InputAction.CallbackContext context)
+    public void CastBlade(Vector3 direction)
     {
         if (_canCastBlade == false) return;
 
@@ -120,21 +76,16 @@ public class PlayerController : MonoSingleton<PlayerController>, IHealth
 
         _isBeamExist = true;
 
-        Vector3 mousePosition = Mouse.current.position.value;
-        mousePosition.z = 10f;
-        Vector3 targetPosition = Camera.main.ScreenToWorldPoint(mousePosition);
-
         _lastBeam = PoolManager.Instance.SpawnFromPool("Blade", transform.position, Quaternion.identity);
         Rigidbody2D projectileRigidbody = _lastBeam.GetComponent<Rigidbody2D>();
-        Vector2 shootDirection = (targetPosition - transform.position);
 
-        projectileRigidbody.velocity = shootDirection.normalized * _bladeSpeed;
-
+        projectileRigidbody.velocity = direction * _bladeSpeed;
 
         _targetGroup.AddMember(_lastBeam.transform, 1, 0);
+
     }
 
-    void TeleportToBlade(InputAction.CallbackContext context)
+    public void TeleportToBlade()
     {
         if (_isBeamExist == false) return;
 
