@@ -14,15 +14,26 @@ public class DragAndShoot : MonoBehaviour
     Vector3 _endPoint;
     Touch _touch;
 
+    bool _isStartDone = false;
+
+    PlayerController _playerController;
+    Camera _camera;
+
+    private void Start()
+    {
+        _playerController = PlayerController.Instance;
+        _camera = Camera.main;
+    }
+
     private void Update()
     {
-        if (PlayerController.Instance.IsGrounded() || PlayerController.Instance.IsWalled(Vector2.left) || PlayerController.Instance.IsWalled(Vector2.right))
+        if ((_playerController.IsGrounded() || _playerController.IsWalled(Vector2.left) || _playerController.IsWalled(Vector2.right)) && _playerController.CanCastBlade)
         {
             if (Input.touchCount > 0)
             {
                 _touch = Input.GetTouch(0);
 
-                if (_touch.phase == TouchPhase.Began)
+                if (_touch.phase == TouchPhase.Began || _isStartDone == false)
                 {
                     DragStart();
                 }
@@ -38,19 +49,36 @@ public class DragAndShoot : MonoBehaviour
                 }
             }
         }
+        else
+        {
+            if (_isStartDone)
+            {
+                _lineRenderer.positionCount = 0;
+
+                _isStartDone = false;
+
+                TimeManager.Instance.SetTime(1);
+            }
+        }
     }
 
     void DragStart()
     {
-        _startPoint = Camera.main.ScreenToWorldPoint(_touch.position);
+        _lineRenderer.positionCount = 0;
+
+        _startPoint = _camera.ScreenToWorldPoint(_touch.position);
         _startPoint.z = 0;
         _lineRenderer.positionCount = 1;
         _lineRenderer.SetPosition(0, _startPoint);
+
+        TimeManager.Instance.SetTime();
+
+        _isStartDone = true;
     }
 
     void Dragging()
     {
-        Vector3 draggingPos = Camera.main.ScreenToWorldPoint(_touch.position);
+        Vector3 draggingPos = _camera.ScreenToWorldPoint(_touch.position);
         draggingPos.z = 0;
         _lineRenderer.positionCount = 2;
         _lineRenderer.SetPosition(1, draggingPos);
@@ -60,17 +88,17 @@ public class DragAndShoot : MonoBehaviour
     {
         _lineRenderer.positionCount = 0;
 
-        _endPoint = Camera.main.ScreenToWorldPoint(_touch.position);
+        _endPoint = _camera.ScreenToWorldPoint(_touch.position);
         _endPoint.z = 0;
 
         Vector3 force = _startPoint - _endPoint;
 
-        Debug.Log(force);
-
         Vector3 clampedForce = Vector3.ClampMagnitude(force, _maxDrag) * _power;
 
-        Debug.Log(clampedForce);
-
         PlayerController.Instance.CastBlade(clampedForce);
+
+        _isStartDone = false;
+
+        TimeManager.Instance.SetTime(1);
     }
 }
