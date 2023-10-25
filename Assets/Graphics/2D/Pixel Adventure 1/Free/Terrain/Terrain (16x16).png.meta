@@ -780,7 +780,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Terrain (16x16)_31
+      name: PlatformL
       rect:
         serializedVersion: 2
         x: 272
@@ -801,7 +801,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Terrain (16x16)_32
+      name: PlatformC
       rect:
         serializedVersion: 2
         x: 288
@@ -822,7 +822,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Terrain (16x16)_33
+      name: PlatformR
       rect:
         serializedVersion: 2
         x: 304
@@ -3172,6 +3172,9 @@ TextureImporter:
       DirtL: -1368007672
       DirtR: 1985970453
       DirtTop: -855275495
+      PlatformC: 732424028
+      PlatformL: 1220775501
+      PlatformR: 2019804263
       Terrain (16x16)_0: 1861726635
       Terrain (16x16)_1: -81083337
       Terrain (16x16)_10: -959617570
@@ -3238,9 +3241,6 @@ TextureImporter:
       Terrain (16x16)_29: -817293411
       Terrain (16x16)_3: 1814094589
       Terrain (16x16)_30: 671661455
-      Terrain (16x16)_31: 1220775501
-      Terrain (16x16)_32: 732424028
-      Terrain (16x16)_33: 2019804263
       Terrain (16x16)_34: -1724447302
       Terrain (16x16)_35: -394587790
       Terrain (16x16)_36: -295146726
