@@ -8,6 +8,8 @@ TagManager:
   - Ice
   - Gum
   - Fan
+  - Spike
+  - Jumper
   layers:
   - Default
   - TransparentFX

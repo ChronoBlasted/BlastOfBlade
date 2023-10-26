@@ -64,6 +64,8 @@ public class PlayerController : MonoSingleton<PlayerController>
         _lastBlade = PoolManager.Instance.SpawnFromPool("Blade", transform.position, Quaternion.identity);
         Rigidbody2D projectileRigidbody = _lastBlade.GetComponent<Rigidbody2D>();
 
+        _lastBlade.GetComponent<BladeController>().InitialForce = direction;
+
         projectileRigidbody.velocity = direction * _bladeSpeed;
 
         projectileRigidbody.velocity += _RB.velocity;
@@ -71,8 +73,11 @@ public class PlayerController : MonoSingleton<PlayerController>
         _targetGroup.AddMember(_lastBlade.transform, 1, 0);
     }
 
-    public void TeleportToBlade(Vector3 impulse)
+    public void TeleportToBlade(Vector3 impulseOnHit, Vector3 bladeVelocity)
     {
+        if (bladeVelocity.x < 0f) _playerAnimator.SetFlipX(true);
+        else if (bladeVelocity.x > 0f) _playerAnimator.SetFlipX(false);
+
         _RB.velocity = Vector3.zero;
 
         _lastBlade.SetActive(false);
@@ -83,10 +88,57 @@ public class PlayerController : MonoSingleton<PlayerController>
 
             _canCastBlade = true;
 
-            if (impulse != Vector3.zero)
+            if (impulseOnHit != Vector3.zero)
             {
-                _RB.AddForce(impulse, ForceMode2D.Impulse);
+                _RB.AddForce(impulseOnHit, ForceMode2D.Impulse);
             }
         });
+    }
+
+    public void ResetBlade()
+    {
+        _lastBlade.SetActive(false);
+
+        _targetGroup.RemoveMember(_lastBlade.transform);
+
+        _canCastBlade = true;
+    }
+
+    public void GetKnockBack()
+    {
+        _RB.velocity = Vector3.zero;
+
+        var side = Random.Range(0, 2);
+        var randomImpulse = Vector3.zero;
+
+        if (side == 0) randomImpulse = new Vector3(Random.Range(-.5f, -.25f), 1, 0);
+        else { randomImpulse = new Vector3(Random.Range(.25f, .5f), 1, 0); }
+
+        _RB.AddForce(randomImpulse * 3, ForceMode2D.Impulse);
+    }
+
+    public void GetHit()
+    {
+        GetKnockBack();
+
+        _playerAnimator.PlayerHit();
+
+        TimeManager.Instance.DoLagTime();
+    }
+
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (collision.gameObject.layer == 30)
+        {
+            if (collision.gameObject.tag == "Spike")
+            {
+                GetHit();
+            }
+
+            if (collision.gameObject.tag == "Jumper")
+            {
+                GetKnockBack();
+            }
+        }
     }
 }

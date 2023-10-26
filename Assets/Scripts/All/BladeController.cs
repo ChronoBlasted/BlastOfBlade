@@ -4,7 +4,9 @@ using UnityEngine;
 
 public class BladeController : MonoBehaviour
 {
+    public Vector3 InitialForce;
     [SerializeField] Rigidbody2D _rb;
+    [SerializeField] ParticleSystem _dieFx;
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
@@ -18,11 +20,36 @@ public class BladeController : MonoBehaviour
             {
                 var slideForce = new Vector2(_rb.velocity.x / 2, 0);
 
-                PlayerController.Instance.TeleportToBlade(slideForce);
+                PlayerController.Instance.TeleportToBlade(slideForce, _rb.velocity);
             }
             else
             {
-                PlayerController.Instance.TeleportToBlade(Vector3.zero);
+                PlayerController.Instance.TeleportToBlade(Vector3.zero, _rb.velocity);
+            }
+        }
+
+        if (collision.gameObject.layer == 30)
+        {
+            if (collision.gameObject.tag == "Spike")
+            {
+                _dieFx.transform.parent = transform;
+                _dieFx.transform.localPosition = Vector3.zero;
+
+                _dieFx.transform.parent = null;
+                _dieFx.Play();
+
+                PlayerController.Instance.ResetBlade();
+            }
+
+            if (collision.gameObject.tag == "Jumper")
+            {
+                var impulse = new Vector3(InitialForce.x * 1.5f, 1.5f, 0);
+
+                _rb.AddForce(impulse * 5, ForceMode2D.Impulse);
+
+                var jumperController = collision.gameObject.GetComponent<JumperController>();
+
+                jumperController.DoJump();
             }
         }
     }
