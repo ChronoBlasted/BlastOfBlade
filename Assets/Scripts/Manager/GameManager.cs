@@ -25,6 +25,10 @@ public class GameManager : MonoSingleton<GameManager>
     {
         Time.timeScale = 1;
 
+        Application.targetFrameRate = 60;
+
+        Screen.orientation = ScreenOrientation.Portrait;
+
         PoolManager.Instance.Init();
 
         ProfileManager.Instance.Init();
